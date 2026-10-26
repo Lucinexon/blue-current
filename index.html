@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#041923" />
+  <meta name="description" content="An interactive field guide to the biggest pressures on our ocean, the science behind them, and the solutions that work." />
+  <title>Blue Current — An Ocean Field Guide</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #eaf8f6;
+      --muted: #9ab8bc;
+      --deep: #041923;
+      --deep-2: #072532;
+      --panel: rgba(10, 45, 57, .74);
+      --line: rgba(181, 231, 225, .16);
+      --aqua: #79f0d7;
+      --cyan: #56c9dc;
+      --coral: #ff987d;
+      --sand: #edddb4;
+      --radius: 22px;
+      --max: 1240px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body {
+      margin: 0;
+      background: var(--deep);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none; z-index: 20; opacity: .12;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.17'/%3E%3C/svg%3E");
+    }
+    a { color: inherit; }
+    button { font: inherit; }
+    button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--aqua); outline-offset: 4px; }
+    .wrap { width: min(var(--max), calc(100% - 48px)); margin-inline: auto; }
+    .topbar {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      width: min(1380px, calc(100% - 56px)); margin: auto; padding: 24px 0;
+      border-bottom: 1px solid rgba(205, 244, 239, .13);
+    }
+    .brand { display: inline-flex; align-items: center; gap: 11px; text-decoration: none; letter-spacing: .15em; font-size: 12px; font-weight: 800; }
+    .brand-mark { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid rgba(121,240,215,.45); border-radius: 50%; color: var(--aqua); }
+    .brand-mark svg { width: 19px; height: 19px; }
+    .brand small { display: block; color: #8db7bc; font-size: 9px; letter-spacing: .19em; font-weight: 600; margin-top: 1px; }
+    .nav { display: flex; align-items: center; gap: 32px; }
+    .nav a { color: #b3c9cb; font-size: 12px; text-decoration: none; transition: color .2s; }
+    .nav a:hover { color: var(--aqua); }
+    .nav .nav-cta { padding: 10px 15px; border: 1px solid rgba(121,240,215,.45); border-radius: 999px; color: var(--aqua); }
+    .hero {
+      position: relative; min-height: 770px; padding: 152px 0 70px; isolation: isolate; overflow: hidden;
+      background: radial-gradient(ellipse at 75% 35%, rgba(16,117,132,.24), transparent 44%),
+                  radial-gradient(ellipse at 13% 2%, rgba(24,88,103,.35), transparent 42%),
+                  linear-gradient(180deg, #06232e 0%, #041923 84%);
+    }
+    .hero::before {
+      content: ""; position: absolute; inset: 0; z-index: -2; opacity: .35;
+      background: repeating-linear-gradient(174deg, transparent 0 85px, rgba(92,190,194,.065) 86px, transparent 88px 153px);
+      mask-image: linear-gradient(90deg, transparent 0%, #000 40%, #000 100%);
+    }
+    .hero::after {
+      content: ""; position: absolute; z-index: -1; width: 720px; height: 720px; top: 50px; right: -230px; border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, rgba(37,158,172,.1), rgba(7,55,69,.03) 53%, transparent 67%);
+      border: 1px solid rgba(105,219,218,.08); box-shadow: 0 0 0 70px rgba(105,219,218,.025), 0 0 0 140px rgba(105,219,218,.018);
+    }
+    .hero-grid { display: grid; grid-template-columns: minmax(350px, .82fr) minmax(500px, 1.18fr); gap: 38px; align-items: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--aqua); text-transform: uppercase; letter-spacing: .2em; font-size: 10px; font-weight: 800; }
+    .eyebrow::before { content: ""; width: 24px; height: 1px; background: currentColor; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin: 22px 0 23px; max-width: 600px; font-size: clamp(43px, 5.1vw, 72px); line-height: .99; letter-spacing: -.065em; font-weight: 560; }
+    h1 em { font-family: Georgia, "Times New Roman", serif; font-weight: 400; color: var(--aqua); letter-spacing: -.055em; }
+    .hero-copy > p { max-width: 440px; color: #a9c2c5; font-size: 15px; line-height: 1.8; }    .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 30px; }
+    .btn { display: inline-flex; align-items: center; gap: 11px; border-radius: 999px; text-decoration: none; cursor: pointer; border: 1px solid transparent; font-size: 12px; font-weight: 750; padding: 13px 18px; transition: transform .2s, background .2s, border .2s; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--aqua); color: #06232c; box-shadow: 0 8px 30px rgba(121,240,215,.12); }
+    .btn-primary:hover { background: #a0ffe8; }
+    .btn-quiet { background: rgba(255,255,255,.025); color: #d8eeee; border-color: var(--line); }
+    .btn-quiet:hover { border-color: rgba(121,240,215,.55); }
+    .arrow { font-size: 16px; line-height: 1; }
+    .micro-note { display: flex; gap: 9px; align-items: center; margin-top: 40px; color: #76999e; text-transform: uppercase; font-size: 9px; letter-spacing: .16em; }
+    .micro-note span { width: 6px; height: 6px; background: var(--coral); border-radius: 50%; box-shadow: 0 0 15px rgba(255,152,125,.75); }
+    .reef-stage { position: relative; height: 540px; min-width: 0; border-radius: 48% 48% 16px 16px; overflow: hidden; border: 1px solid rgba(128,218,216,.17); background:
+      radial-gradient(ellipse at 50% 25%, rgba(47,151,165,.16), transparent 48%),
+      linear-gradient(180deg, rgba(13,83,98,.35), rgba(2,21,31,.1) 58%, rgba(2,19,27,.58));
+      box-shadow: inset 0 0 80px rgba(67,174,180,.07), 0 40px 100px rgba(0,0,0,.1);
+    }
+    .reef-stage::before { content:""; position:absolute; inset:0; opacity:.5; background: repeating-radial-gradient(ellipse at 48% 115%, transparent 0 40px, rgba(104,213,211,.11) 41px 42px, transparent 43px 74px); }
+    .stage-label { position: absolute; z-index: 2; left: 28px; top: 27px; color: #a3c4c6; font-size: 9px; letter-spacing: .21em; text-transform: uppercase; }
+    .stage-label strong { display: block; color: var(--aqua); font-weight: 800; margin-top: 6px; letter-spacing: .14em; }
+    .stage-count { position: absolute; z-index: 2; top: 26px; right: 25px; color: #6f969a; font-size: 10px; font-variant-numeric: tabular-nums; }
+    .current-line { position: absolute; width: 125%; height: 130px; left: -10%; top: 48%; border-top: 1px solid rgba(119,222,220,.15); border-radius: 50%; transform: rotate(-15deg); }
+    .current-line::after { content:""; position:absolute; width:100%; height:100%; top: 16px; border-top: 1px solid rgba(119,222,220,.075); border-radius:50%; }
+    .bubble { position:absolute; border:1px solid rgba(179,245,236,.33); border-radius:50%; background:rgba(124,230,222,.035); animation: bubbleFloat 9s ease-in-out infinite; }
+    .b1 { width:7px;height:7px;left:18%;top:29%; animation-delay:-2s; }
+    .b2 { width:13px;height:13px;left:71%;top:21%; animation-delay:-5s; }
+    .b3 { width:5px;height:5px;left:83%;top:57%; animation-delay:-1s; }
+    .b4 { width:9px;height:9px;left:32%;top:67%; animation-delay:-6s; }
+    .b5 { width:4px;height:4px;left:56%;top:42%; animation-delay:-3s; }
+    @keyframes bubbleFloat { 0%,100% { transform:translateY(0); opacity:.45 } 50% { transform:translateY(-16px); opacity:1 } }
+    .fish { position: absolute; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 9px 7px; border: 0; border-radius: 15px; background: transparent; cursor: pointer; color: #d8efec; transition: transform .25s, background .25s, filter .25s; --fish-color: #7af0d7; }
+    .fish:hover, .fish:focus-visible { background: rgba(132,233,222,.09); transform: translateY(-5px) scale(1.06); filter: drop-shadow(0 0 17px rgba(121,240,215,.26)); }
+    .fish svg { width: 91px; height: 65px; overflow: visible; filter: drop-shadow(0 12px 11px rgba(0,0,0,.18)); }
+    .fish .fish-caption { display: flex; gap: 6px; align-items: center; font-size: 9px; font-weight: 750; letter-spacing: .06em; white-space: nowrap; }
+    .fish .fish-caption::before { content: ""; width: 5px; height: 5px; background: var(--fish-color); border-radius: 50%; }
+    .f-plastic { left: 10%; top: 24%; --fish-color:#ff9f79; }
+    .f-heat { left: 54%; top: 15%; --fish-color:#ffd36a; }
+    .f-fishing { left: 31%; top: 42%; --fish-color:#83d7ef; }
+    .f-acid { left: 68%; top: 47%; --fish-color:#c5b0ff; }
+    .f-oxygen { left: 12%; top: 62%; --fish-color:#79f0d7; }
+    .f-gear { left: 54%; top: 69%; --fish-color:#ff9b92; }
+    .swim { animation: swim 6s ease-in-out infinite; }
+    .f-heat .swim { animation-delay:-1.3s; }
+    .f-fishing .swim { animation-delay:-3.4s; }
+    .f-acid .swim { animation-delay:-2.1s; }
+    .f-oxygen .swim { animation-delay:-4.2s; }
+    .f-gear .swim { animation-delay:-.8s; }
+    @keyframes swim { 0%,100% { transform:translateY(0) rotate(-1deg) } 50% { transform:translateY(-8px) rotate(1deg) } }
+    .fish-hint { position:absolute; z-index:3; bottom:18px; left:0; right:0; text-align:center; color:#648d93; font-size:9px; letter-spacing:.16em; text-transform:uppercase; }
+    .reef-ledge { position:absolute; bottom:-1px; left:0; width:100%; height:98px; opacity:.8; }
+    .hero-foot { display:flex; justify-content:space-between; align-items:center; padding-top: 27px; color:#6d9297; font-size:10px; letter-spacing:.1em; text-transform:uppercase; }
+    .scroll-cue { display:inline-flex; gap:10px; align-items:center; }
+    .scroll-cue i { display:block; height:1px; width:31px; background:#5c8b91; }
+
+    .stats { position:relative; z-index:1; background:#071f2a; border-block:1px solid rgba(159,222,220,.13); }
+    .stats-inner { display:grid; grid-template-columns:repeat(3, 1fr); }
+    .stat { padding:28px 28px 29px; border-right:1px solid var(--line); }
+    .stat:first-child { padding-left:0; }
+    .stat:last-child { border-right:0; }
+    .stat-num { font-family:Georgia,serif; font-size:clamp(31px,3vw,43px); letter-spacing:-.06em; line-height:1.1; color:var(--aqua); }
+    .stat p { color:#a3c0c3; max-width:265px; font-size:11px; margin:9px 0 0; line-height:1.6; }
+    .stat small { display:block; color:#668b91; margin-top:9px; font-size:9px; }
+
+    .section { padding:115px 0; }
+    .section-top { display:flex; align-items:flex-end; justify-content:space-between; gap:35px; margin-bottom:43px; }
+    .section-top h2 { font-size:clamp(34px,4.2vw,55px); line-height:1.06; letter-spacing:-.06em; font-weight:550; max-width:650px; margin:13px 0 0; }
+    .section-top h2 em { font-family:Georgia,serif; color:var(--aqua); font-weight:400; }
+    .section-top > p { max-width:310px; margin:0 0 4px; color:#8eafb4; font-size:13px; line-height:1.8; }
+    .issue-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .issue-card { position:relative; min-height:285px; display:flex; flex-direction:column; text-align:left; width:100%; padding:25px; border-radius:var(--radius); border:1px solid var(--line); color:var(--ink); background:linear-gradient(142deg, rgba(17,65,78,.65), rgba(5,29,39,.86)); overflow:hidden; cursor:pointer; transition:transform .22s, border-color .22s, background .22s; }
+    .issue-card:hover { transform:translateY(-5px); border-color:rgba(121,240,215,.45); background:linear-gradient(142deg, rgba(19,83,95,.8), rgba(5,29,39,.9)); }
+    .issue-card::after { content:""; position:absolute; width:150px; height:150px; right:-55px; top:-60px; border-radius:50%; border:1px solid rgba(111,216,216,.11); box-shadow:0 0 0 20px rgba(111,216,216,.025), 0 0 0 42px rgba(111,216,216,.018); }
+    .card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .card-icon { width:39px; height:39px; display:grid; place-items:center; border-radius:13px; border:1px solid rgba(121,240,215,.2); color:var(--aqua); background:rgba(121,240,215,.06); }
+    .card-icon svg { width:21px; height:21px; }
+    .card-index { font-size:10px; letter-spacing:.14em; color:#628b91; }
+    .issue-card h3 { font-size:22px; letter-spacing:-.04em; margin-bottom:8px; font-weight:580; }
+    .issue-card p { color:#91afb3; font-size:12px; line-height:1.75; max-width:300px; margin-bottom:25px; }
+    .card-link { display:flex; align-items:center; justify-content:space-between; margin-top:auto; color:var(--aqua); font-size:11px; font-weight:750; }
+    .card-link span:last-child { font-size:16px; transition:transform .2s; }
+    .issue-card:hover .card-link span:last-child { transform:translateX(4px); }
+    .card-kpi { position:absolute; right:24px; bottom:61px; font-family:Georgia,serif; font-size:24px; color:rgba(121,240,215,.18); }
+    .protection { position:relative; overflow:hidden; background:linear-gradient(110deg, #0a3440, #062630 74%); border-block:1px solid rgba(121,240,215,.12); }
+    .protection::after { content:""; position:absolute; right:-100px; top:-170px; width:530px; height:530px; border-radius:50%; border:1px solid rgba(121,240,215,.11); box-shadow:0 0 0 55px rgba(121,240,215,.025),0 0 0 115px rgba(121,240,215,.02),0 0 0 175px rgba(121,240,215,.015); }
+    .protect-grid { display:grid; grid-template-columns:1fr 1fr; gap:70px; align-items:center; position:relative; z-index:1; }
+    .protect-copy h2 { font-size:clamp(34px,4vw,53px); line-height:1.05; letter-spacing:-.06em; font-weight:550; margin:15px 0 20px; }
+    .protect-copy h2 em { font-family:Georgia,serif; font-weight:400; color:var(--aqua); }
+    .protect-copy p { color:#a3c0c3; max-width:495px; font-size:13px; line-height:1.85; }
+    .protect-copy .btn { margin-top:14px; }
+    .progress-panel { padding:28px; border:1px solid rgba(157,231,224,.2); border-radius:24px; background:rgba(2,24,34,.45); box-shadow:0 25px 80px rgba(0,0,0,.12); }
+    .progress-head { display:flex; align-items:flex-start; justify-content:space-between; gap:15px; }
+    .progress-head span { color:#8fb2b5; font-size:10px; letter-spacing:.11em; text-transform:uppercase; }
+    .progress-head strong { display:block; color:var(--aqua); font-family:Georgia,serif; font-weight:400; font-size:52px; line-height:1.1; letter-spacing:-.06em; margin-top:8px; }
+    .progress-badge { border:1px solid rgba(255,152,125,.3); border-radius:999px; color:#ffb09a!important; padding:7px 9px; white-space:nowrap; font-size:9px!important; letter-spacing:.06em!important; }
+    .progress-track { height:7px; margin:25px 0 14px; overflow:hidden; border-radius:999px; background:rgba(201,240,234,.1); }
+    .progress-track span { display:block; width:10.01%; height:100%; background:linear-gradient(90deg,var(--aqua),#e3e7a5); box-shadow:0 0 20px rgba(121,240,215,.4); border-radius:999px; }
+    .progress-scale { display:flex; align-items:center; justify-content:space-between; color:#668c91; text-transform:uppercase; letter-spacing:.13em; font-size:9px; }
+    .progress-panel > p { margin:26px 0 0; padding-top:21px; border-top:1px solid var(--line); color:#9bb9bd; font-size:12px; line-height:1.75; }
+    .progress-panel a { color:var(--aqua); text-underline-offset:3px; }
+
+    .action-section { padding-bottom:125px; }
+    .action-grid { display:grid; grid-template-columns:1fr 1fr; gap:55px; align-items:start; }
+    .action-copy h2 { font-size:clamp(34px,4vw,52px); letter-spacing:-.06em; font-weight:550; line-height:1.05; margin:14px 0 18px; }
+    .action-copy h2 em { color:var(--aqua); font-family:Georgia,serif; font-weight:400; }
+    .action-copy p { max-width:465px; color:#91afb3; line-height:1.85; font-size:13px; }
+    .actions-list { border-top:1px solid var(--line); }
+    .action-row { display:flex; align-items:flex-start; gap:15px; padding:18px 0; border-bottom:1px solid var(--line); cursor:pointer; }
+    .action-row input { appearance:none; flex:0 0 18px; width:18px; height:18px; margin:3px 0 0; border:1px solid rgba(121,240,215,.38); border-radius:5px; background:rgba(121,240,215,.04); cursor:pointer; position:relative; }
+    .action-row input:checked { background:var(--aqua); border-color:var(--aqua); }
+    .action-row input:checked::after { content:"✓"; color:#05232b; font-size:13px; position:absolute; inset:-1px 0 0; text-align:center; font-weight:900; }
+    .action-row strong { display:block; font-size:13px; font-weight:700; margin-bottom:4px; }
+    .action-row small { display:block; color:#86a8ad; font-size:11px; line-height:1.65; }
+    .action-footer { display:flex; gap:15px; align-items:center; justify-content:space-between; padding-top:20px; }
+    .action-progress { color:#80a4a9; font-size:10px; }
+    .action-progress strong { color:var(--aqua); }
+    .action-footer .btn { padding:10px 14px; font-size:11px; }
+    .toast { min-height:20px; margin-top:10px; color:var(--aqua); font-size:11px; }
+
+    footer { border-top:1px solid var(--line); background:#03151d; padding:38px 0 28px; }
+    .footer-top { display:flex; justify-content:space-between; align-items:flex-start; gap:30px; padding-bottom:28px; }
+    .footer-brand p { max-width:260px; color:#6f9297; font-size:10px; line-height:1.7; margin:15px 0 0; }
+    .source-list { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; max-width:680px; }
+    .source-list a { display:inline-flex; text-decoration:none; color:#8fb2b5; border:1px solid rgba(154,216,214,.15); padding:7px 10px; border-radius:999px; font-size:10px; transition:all .2s; }
+    .source-list a:hover { color:var(--aqua); border-color:rgba(121,240,215,.5); }
+    .footer-bottom { border-top:1px solid rgba(154,216,214,.1); padding-top:18px; display:flex; justify-content:space-between; align-items:center; gap:20px; color:#587c82; font-size:9px; letter-spacing:.07em; }
+    .footer-bottom a { color:#84a6aa; text-underline-offset:3px; }
+
+    .modal-backdrop { position:fixed; inset:0; z-index:50; display:none; align-items:center; justify-content:center; padding:24px; background:rgba(0,10,16,.76); backdrop-filter:blur(12px); }
+    .modal-backdrop.open { display:flex; animation:fadeIn .18s ease-out; }
+    @keyframes fadeIn { from {opacity:0} to {opacity:1} }
+    .issue-modal { position:relative; width:min(720px,100%); max-height:min(88vh,820px); overflow:auto; padding:36px; border:1px solid rgba(130,226,218,.25); border-radius:25px; background:radial-gradient(ellipse at top right, rgba(39,130,142,.25), transparent 50%),#072631; box-shadow:0 30px 100px rgba(0,0,0,.4); }
+    .modal-close { position:absolute; top:18px; right:18px; display:grid; place-items:center; width:35px; height:35px; border-radius:50%; color:#b5d0d0; background:rgba(255,255,255,.04); border:1px solid var(--line); cursor:pointer; font-size:19px; }
+    .modal-tag { color:var(--aqua); font-size:10px; text-transform:uppercase; letter-spacing:.2em; font-weight:800; }
+    .issue-modal h2 { max-width:560px; margin:12px 35px 15px 0; font-size:clamp(30px,5vw,46px); line-height:1.02; letter-spacing:-.06em; font-weight:560; }
+    .modal-lede { max-width:600px; font-size:14px; line-height:1.8; color:#a8c4c6; }
+    .modal-stat { display:flex; align-items:center; gap:18px; margin:25px 0; padding:18px 20px; background:rgba(121,240,215,.055); border:1px solid rgba(121,240,215,.15); border-radius:15px; }
+    .modal-stat strong { flex:0 0 auto; color:var(--aqua); font-family:Georgia,serif; font-size:clamp(25px,4vw,37px); line-height:1; letter-spacing:-.04em; font-weight:400; }
+    .modal-stat span { color:#9fbec0; font-size:11px; line-height:1.65; }
+    .modal-columns { display:grid; grid-template-columns:1fr 1fr; gap:23px; }
+    .modal-columns h3 { color:#e7f9f5; font-size:13px; margin:0 0 9px; }
+    .modal-columns p { font-size:12px; line-height:1.8; color:#91b2b5; margin:0; }
+    .modal-source { margin-top:27px; border-top:1px solid var(--line); padding-top:17px; display:flex; gap:15px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    .modal-source small { color:#62868b; font-size:10px; }
+    .modal-source a { font-size:11px; color:var(--aqua); text-underline-offset:3px; font-weight:700; }
+    .visually-hidden { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important; }
+
+    @media (max-width: 1050px) {
+      .hero-grid { grid-template-columns:1fr; gap:35px; }
+      .hero { padding-top:130px; }
+      .hero-copy { max-width:780px; }
+      .hero-copy > p { max-width:550px; }
+      .reef-stage { height:480px; width:min(750px,100%); margin-inline:auto; }
+      .hero-foot { margin-top:10px; }
+      .protect-grid { gap:35px; }
+    }
+    @media (max-width: 760px) {
+      .wrap { width:min(100% - 32px, var(--max)); }
+      .topbar { width:calc(100% - 32px); padding:17px 0; }
+      .nav { gap:14px; }
+      .nav a { font-size:10px; }
+      .nav a:nth-child(2) { display:none; }      .nav .nav-cta { padding:8px 11px; }
+      .hero { min-height:auto; padding:112px 0 38px; }
+      .hero-grid { grid-template-columns:minmax(0,1fr); gap:25px; }
+      h1 { max-width:560px; font-size:clamp(43px, 11vw, 67px); }
+      .hero-copy > p { font-size:13px; }
+      .micro-note { margin-top:26px; }
+      .reef-stage { height:405px; border-radius:38% 38% 14px 14px; }
+      .fish { transform:scale(.82); transform-origin:center; padding:6px; }
+      .fish:hover, .fish:focus-visible { transform:scale(.88) translateY(-4px); }
+      .fish svg { width:76px; height:55px; }
+      .f-plastic { left:4%; top:22%; }
+      .f-heat { left:48%; top:13%; }
+      .f-fishing { left:24%; top:40%; }
+      .f-acid { left:65%; top:45%; }
+      .f-oxygen { left:3%; top:62%; }
+      .f-gear { left:50%; top:66%; }
+      .stage-label { left:18px; top:22px; }
+      .stage-count { right:16px; top:22px; }
+      .hero-foot { font-size:8px; }
+      .stats-inner { grid-template-columns:1fr; }
+      .stat, .stat:first-child { padding:20px 0; border-right:0; border-bottom:1px solid var(--line); display:grid; grid-template-columns:115px 1fr; column-gap:18px; align-items:center; }
+      .stat:last-child { border-bottom:0; }
+      .stat p { margin:0; }
+      .stat small { grid-column:2; margin-top:5px; }
+      .section { padding:78px 0; }
+      .section-top { display:block; margin-bottom:29px; }
+      .section-top h2 { font-size:clamp(34px,9vw,48px); }
+      .section-top > p { margin-top:17px; max-width:520px; }
+      .issue-grid { grid-template-columns:1fr 1fr; gap:10px; }
+      .issue-card { min-height:255px; padding:18px; border-radius:17px; }
+      .issue-card h3 { font-size:18px; }
+      .issue-card p { font-size:11px; }
+      .card-kpi { right:16px; bottom:57px; font-size:19px; }
+      .protect-grid, .action-grid { grid-template-columns:1fr; gap:35px; }
+      .protection { padding:76px 0; }
+      .progress-panel { padding:21px; }
+      .action-section { padding-bottom:80px; }
+      .footer-top { display:block; }
+      .source-list { justify-content:flex-start; margin-top:24px; }
+      .footer-bottom { align-items:flex-start; flex-direction:column; gap:8px; }
+      .issue-modal { padding:29px 22px 24px; }
+      .modal-columns { grid-template-columns:1fr; gap:18px; }
+      .modal-stat { align-items:flex-start; flex-direction:column; gap:7px; }
+    }
+    @media (max-width: 420px) {
+      .brand { font-size:10px; }
+      .brand small { font-size:8px; }
+      .nav { gap:9px; }
+      .nav a:first-child { display:none; }
+      .reef-stage { height:365px; }
+      .fish svg { width:68px; height:50px; }
+      .fish .fish-caption { font-size:8px; }
+      .f-heat { left:46%; }
+      .f-acid { left:61%; }
+      .f-gear { left:48%; }
+      .issue-grid { grid-template-columns:1fr; }
+      .issue-card { min-height:230px; }
+      .action-footer { align-items:flex-start; flex-direction:column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Blue Current home">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 9.5c3.1 0 3.1-2.5 6.2-2.5s3.1 2.5 6.2 2.5S18.5 7 21 7M3 14.5c3.1 0 3.1-2.5 6.2-2.5s3.1 2.5 6.2 2.5 3.1-2.5 3.6-2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+      <span>BLUE CURRENT<small>AN OCEAN FIELD GUIDE</small></span>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#signals">Ocean signals</a>
+      <a href="#protection">Protected waters</a>
+      <a class="nav-cta" href="#action">Take action <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="wrap">        <div class="hero-grid">
+          <div class="hero-copy">
+            <span class="eyebrow">A living blue planet</span>
+            <h1>The ocean is not a <em>bottomless</em> resource.</h1>
+            <p>It gives us oxygen, food, climate stability, and entire worlds we have barely explored. But the systems keeping it alive are under pressure. Follow the fish to find out what is changing, why it matters, and what actually helps.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#signals">Explore the signals <span class="arrow" aria-hidden="true">↘</span></a>
+              <a class="btn btn-quiet" href="#action">Find your next move</a>
+            </div>
+            <div class="micro-note"><span></span> evidence-led · solutions-focused · updated 26 oct 2026</div>
+          </div>
+          <div class="reef-stage" aria-label="Interactive ocean scene. Select one of the six fish to explore an ocean conservation issue.">
+            <div class="stage-label">Below the surface<strong>Six signals to follow</strong></div>
+            <div class="stage-count">FIELD NOTES / 001—006</div>
+            <div class="current-line" aria-hidden="true"></div>
+            <i class="bubble b1" aria-hidden="true"></i><i class="bubble b2" aria-hidden="true"></i><i class="bubble b3" aria-hidden="true"></i><i class="bubble b4" aria-hidden="true"></i><i class="bubble b5" aria-hidden="true"></i>
+            <button class="fish f-plastic" data-issue="plastic" aria-label="Explore plastic pollution">
+              <span class="swim"><svg viewBox="0 0 120 78" role="img" aria-hidden="true"><path d="M24 38 6 18 7 57 25 45Z" fill="#ed885f" stroke="#6a514a" stroke-width="1.5"/><path d="M21 39C23 19 42 13 68 21 84 26 95 32 101 39 91 49 75 56 52 57 34 57 23 50 21 39Z" fill="#f78e65" stroke="#593f3b" stroke-width="1.7"/><path d="M47 20C41 30 41 46 48 56M67 22C61 32 61 44 67 53" fill="none" stroke="#fff3d7" stroke-width="8"/><path d="M45 20C41 29 41 47 48 56M67 22C61 32 61 44 67 53" fill="none" stroke="#ad614d" stroke-width="1"/><path d="M52 56 58 67 68 56" fill="#e77757" stroke="#593f3b" stroke-width="1.3"/><circle cx="87" cy="35" r="3" fill="#102934"/><circle cx="88" cy="34" r="1" fill="#f5fbef"/><path d="M101 42 108 44 101 46" fill="none" stroke="#593f3b" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+              <span class="fish-caption">Plastic tide</span>
+            </button>
+            <button class="fish f-heat" data-issue="heat" aria-label="Explore ocean warming and coral bleaching">
+              <span class="swim"><svg viewBox="0 0 120 78" role="img" aria-hidden="true"><path d="M26 40 5 20 8 60 28 48Z" fill="#f5c957" stroke="#725b3b" stroke-width="1.5"/><path d="M27 39C33 20 55 15 82 26L102 39 82 53C57 62 35 55 27 39Z" fill="#f5d46b" stroke="#725b3b" stroke-width="1.7"/><path d="M50 23 42 55M70 23 66 56M86 29 84 50" stroke="#354c4f" stroke-width="7"/><path d="M43 23 39 55M63 23 60 56M80 28 78 50" stroke="#fff0c4" stroke-width="1.2" opacity=".7"/><path d="M53 23 61 11 74 24" fill="#e8be55" stroke="#725b3b" stroke-width="1.3"/><path d="M56 54 64 65 73 53" fill="#f5c957" stroke="#725b3b" stroke-width="1.3"/><circle cx="90" cy="35" r="3" fill="#112934"/><circle cx="91" cy="34" r="1" fill="#fff"/><path d="M102 40 109 42 102 44" fill="none" stroke="#725b3b" stroke-width="1.5"/></svg></span>
+              <span class="fish-caption">Reef heat</span>
+            </button>
+            <button class="fish f-fishing" data-issue="fishing" aria-label="Explore overfishing">
+              <span class="swim"><svg viewBox="0 0 120 78" role="img" aria-hidden="true"><path d="M19 39 4 22 5 58 21 47Z" fill="#4f9db9" stroke="#214957" stroke-width="1.5"/><path d="M18 39C29 23 54 18 78 27L104 39 79 52C55 60 30 54 18 39Z" fill="#5caec8" stroke="#214957" stroke-width="1.7"/><path d="M35 29Q54 19 71 26L64 31 43 34Z" fill="#9eddec" opacity=".8"/><path d="M44 53 54 64 65 54" fill="#4f9db9" stroke="#214957" stroke-width="1.3"/><path d="M76 27 83 17 88 31" fill="#4f9db9" stroke="#214957" stroke-width="1.3"/><path d="M34 27Q31 39 36 51" fill="none" stroke="#d6f3f5" stroke-width="1.4" opacity=".65"/><circle cx="91" cy="35" r="3" fill="#102b35"/><circle cx="92" cy="34" r="1" fill="#fff"/><path d="M104 40 111 42 104 44" fill="none" stroke="#214957" stroke-width="1.5"/></svg></span>
+              <span class="fish-caption">Empty nets</span>
+            </button>
+            <button class="fish f-acid" data-issue="acid" aria-label="Explore ocean acidification">
+              <span class="swim"><svg viewBox="0 0 120 78" role="img" aria-hidden="true"><path d="M24 38 8 24 8 55 25 47Z" fill="#b5a2f7" stroke="#514d7b" stroke-width="1.4"/><path d="M22 39C24 20 42 15 65 20 83 23 96 32 99 40 96 50 80 57 62 58 40 59 25 52 22 39Z" fill="#c1b2f7" stroke="#514d7b" stroke-width="1.6"/><path d="M41 22 32 12 53 18M50 57 45 68 63 57" fill="#a796e8" stroke="#514d7b" stroke-width="1.4"/><circle cx="88" cy="35" r="3" fill="#1c263d"/><circle cx="89" cy="34" r="1" fill="#fff"/><path d="M99 41 105 43 99 45" fill="none" stroke="#514d7b" stroke-width="1.4"/><path d="M43 35q5-7 10 0m5 9q5-7 10 0m4-13q5-7 10 0" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".7"/></svg></span>
+              <span class="fish-caption">Chemistry shift</span>
+            </button>
+            <button class="fish f-oxygen" data-issue="oxygen" aria-label="Explore low-oxygen dead zones">
+              <span class="swim"><svg viewBox="0 0 120 78" role="img" aria-hidden="true"><path d="M22 39 4 21 6 57 24 47Z" fill="#58d1b7" stroke="#205a57" stroke-width="1.5"/><path d="M20 39C26 22 49 18 76 26L101 39 78 52C52 61 28 55 20 39Z" fill="#65dcc1" stroke="#205a57" stroke-width="1.7"/><path d="M40 25 35 14 54 23M50 55 57 66 69 54" fill="#48b9a5" stroke="#205a57" stroke-width="1.4"/><path d="M32 32q8-7 14 0M45 43q8-7 14 0M60 31q8-7 14 0" fill="none" stroke="#e4fff2" stroke-width="1.5" opacity=".8"/><circle cx="88" cy="35" r="3" fill="#14333a"/><circle cx="89" cy="34" r="1" fill="#fff"/><path d="M101 40 108 42 101 44" fill="none" stroke="#205a57" stroke-width="1.5"/></svg></span>
+              <span class="fish-caption">Oxygen loss</span>
+            </button>
+            <button class="fish f-gear" data-issue="gear" aria-label="Explore lost fishing gear">
+              <span class="swim"><svg viewBox="0 0 120 78" role="img" aria-hidden="true"><path d="M23 39 6 22 7 57 25 47Z" fill="#ed9189" stroke="#734d50" stroke-width="1.5"/><path d="M22 39C24 20 43 15 66 21 84 25 97 33 100 40 92 50 77 56 57 57 37 57 25 51 22 39Z" fill="#f5a09a" stroke="#734d50" stroke-width="1.6"/><path d="M41 22 33 11 53 20M50 55 56 65 69 55" fill="#e98480" stroke="#734d50" stroke-width="1.3"/><path d="M41 30q8 9 0 17m13-20q8 12 0 23m14-21q7 9 0 17" fill="none" stroke="#fff1d5" stroke-width="3.5" stroke-linecap="round"/><circle cx="88" cy="35" r="3" fill="#322b3a"/><circle cx="89" cy="34" r="1" fill="#fff"/><path d="M100 41 107 43 100 45" fill="none" stroke="#734d50" stroke-width="1.5"/></svg></span>
+              <span class="fish-caption">Ghost gear</span>
+            </button>
+            <svg class="reef-ledge" viewBox="0 0 720 120" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="coral" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#246c72"/><stop offset="1" stop-color="#0a333d"/></linearGradient></defs><path d="M0 108Q30 80 54 93T105 83Q134 66 160 102L178 120H0ZM210 120Q235 80 250 93L267 62 282 97 299 83 318 120ZM430 120Q451 87 469 98L487 70 505 103 521 89 542 120ZM590 120Q608 81 630 96L651 57 668 103 691 86 720 105V120Z" fill="url(#coral)" opacity=".9"/><path d="M36 120 45 91 56 103 61 77 71 105 83 92 94 120M135 120 146 87 158 103 168 80 180 120M537 120 549 93 558 108 567 79 579 108 586 120" fill="none" stroke="#398c8b" stroke-width="4" stroke-linecap="round" opacity=".6"/><path d="M0 112Q90 92 178 111T355 111T545 108T720 108V120H0Z" fill="#06242e"/></svg>
+            <div class="fish-hint">select any swimmer to open its field notes ↓</div>
+          </div>
+        </div>
+        <div class="hero-foot"><span>the blue connects everything</span><span class="scroll-cue"><i></i> scroll to investigate</span></div>
+      </div>
+    </section>
+
+    <section class="stats" aria-label="Ocean conservation snapshot">
+      <div class="wrap stats-inner">
+        <div class="stat"><div class="stat-num">84%</div><div><p>of the world’s coral reef area experienced bleaching-level heat stress during the 2023–2025 global event.</p><small>NOAA · JUNE 2026</small></div></div>
+        <div class="stat"><div class="stat-num">35.5%</div><div><p>of assessed marine fishery stocks were classified as overfished in the latest global FAO assessment.</p><small>FAO · 2025 ASSESSMENT</small></div></div>
+        <div class="stat"><div class="stat-num">19–23 Mt</div><div><p>of plastic waste enters aquatic ecosystems every year, including rivers, lakes, and seas.</p><small>UNEP · GLOBAL ESTIMATE</small></div></div>
+      </div>
+    </section>
+
+    <section class="section" id="signals">
+      <div class="wrap">
+        <div class="section-top">
+          <div><span class="eyebrow">The signals</span><h2>Six pressures. One <em>connected</em> ocean.</h2></div>
+          <p>These problems rarely happen alone. Climate stress can weaken reefs; pollution can compound habitat loss; and the effects travel through food webs and coastal communities.</p>
+        </div>
+        <div class="issue-grid">
+          <button class="issue-card" data-issue="plastic"><div class="card-top"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M8 3h8M9 3v5l-4 7a4 4 0 0 0 3.5 6h7a4 4 0 0 0 3.5-6l-4-7V3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.2 15h9.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="card-index">01 / WASTE</span></div><h3>Plastic, everywhere</h3><p>Discarded packaging breaks into smaller pieces, moves through waterways, and can be mistaken for food or trap wildlife.</p><span class="card-link"><span>Trace the plastic tide</span><span>↗</span></span><span class="card-kpi">19–23 Mt / yr</span></button>
+          <button class="issue-card" data-issue="heat"><div class="card-top"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v11.3a4 4 0 1 0 3 3.87V3a3 3 0 0 0-6 0v15.17a4 4 0 1 0 3-3.87" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 7v10" stroke="currentColor" stroke-width="1.5"/></svg></span><span class="card-index">02 / HEAT</span></div><h3>A reef running hot</h3><p>Marine heat waves can trigger mass coral bleaching, leaving reef ecosystems more vulnerable to disease and mortality.</p><span class="card-link"><span>Read the heat signal</span><span>↗</span></span><span class="card-kpi">84% exposed</span></button>
+          <button class="issue-card" data-issue="fishing"><div class="card-top"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12c4-6 11-7 16-2l2 2-2 2c-5 5-12 4-16-2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="m4 12-2-4v8l2-4M13 9l-2 3 2 3" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="17" cy="11" r=".8" fill="currentColor"/></svg></span><span class="card-index">03 / FOOD WEBS</span></div><h3>More catch than recovery</h3><p>When fishing pressure outpaces reproduction, stocks shrink and ecosystems can lose important links in the food web.</p><span class="card-link"><span>Explore sustainable fishing</span><span>↗</span></span><span class="card-kpi">35.5%</span></button>
+          <button class="issue-card" data-issue="acid"><div class="card-top"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3c2.4 3.3 6.3 7.1 6.3 11.5a6.3 6.3 0 1 1-12.6 0C5.7 10.1 9.6 6.3 12 3Z" stroke="currentColor" stroke-width="1.5"/><path d="M9 15.5c.7 1.1 1.6 1.6 3 1.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="card-index">04 / CHEMISTRY</span></div><h3>Water changing its chemistry</h3><p>As the ocean absorbs carbon dioxide, seawater becomes more acidic and some shell-building species struggle.</p><span class="card-link"><span>Understand acidification</span><span>↗</span></span><span class="card-kpi">+26% acidity</span></button>
+          <button class="issue-card" data-issue="oxygen"><div class="card-top"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 8c2.2 0 2.2-2 4.4-2s2.2 2 4.4 2 2.2-2 4.4-2 2.2 2 4.4 2M3 13c2.2 0 2.2-2 4.4-2s2.2 2 4.4 2 2.2-2 4.4-2 2.2 2 4.4 2M3 18c2.2 0 2.2-2 4.4-2s2.2 2 4.4 2 2.2-2 4.4-2 2.2 2 4.4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="card-index">05 / OXYGEN</span></div><h3>Dead zones</h3><p>Excess nutrients can fuel algal blooms; as they decompose, oxygen drops and marine animals may have to flee.</p><span class="card-link"><span>Follow the oxygen loss</span><span>↗</span></span><span class="card-kpi">low O₂</span></button>
+          <button class="issue-card" data-issue="gear"><div class="card-top"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4 19 20M19 4 5 20M12 3v18M3 12h18M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.2"/></svg></span><span class="card-index">06 / GEAR</span></div><h3>Fishing without a fisher</h3><p>Lost nets, lines, and traps can keep catching animals long after they have been abandoned. It is called ghost fishing.</p><span class="card-link"><span>See the ghost gear problem</span><span>↗</span></span><span class="card-kpi">long-lived harm</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section protection" id="protection">
+      <div class="wrap protect-grid">
+        <div class="protect-copy"><span class="eyebrow">Room to recover</span><h2>Protection works.<br><em>Scale is the challenge.</em></h2><p>Well-designed marine protected areas can give habitats and wildlife space to recover, especially when protections are enforced and local communities help shape them. The goal is not just lines on a map; it is meaningful protection in the water.</p><a class="btn btn-quiet" href="https://iucn.org/press-release/202604/world-reaches-milestone-nature-10-ocean-now-officially-protected" target="_blank" rel="noopener noreferrer">Read the 2026 global update <span class="arrow" aria-hidden="true">↗</span></a></div>
+        <div class="progress-panel">
+          <div class="progress-head"><div><span>Ocean officially designated protected</span><strong>10.01%</strong></div><span class="progress-badge">30% target by 2030</span></div>
+          <div class="progress-track" role="img" aria-label="10.01 percent of the ocean is officially designated within protected and conserved areas, with a global goal of 30 percent by 2030."><span></span></div>
+          <div class="progress-scale"><span>0% · today’s designation</span><span>30% · 2030 goal</span></div>          <p>As of April 2026, 10.01% of the ocean had been officially designated within protected and conserved areas. That is real progress, but designation alone does not guarantee effective protection. <a href="https://iucn.org/press-release/202604/world-reaches-milestone-nature-10-ocean-now-officially-protected" target="_blank" rel="noopener noreferrer">Source: IUCN, April 2026</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section action-section" id="action">
+      <div class="wrap action-grid">
+        <div class="action-copy"><span class="eyebrow">From awareness to action</span><h2>Small moves matter.<br><em>Systems change matters more.</em></h2><p>Individual choices help most when they reduce demand for waste, support better rules, and reinforce work led by scientists, coastal communities, and conservation groups. Build a realistic starting plan below.</p><p>Choose the actions that fit your life. The point is progress, not a guilt-powered spreadsheet.</p></div>
+        <div>
+          <div class="actions-list" aria-label="Ocean action checklist">
+            <label class="action-row"><input type="checkbox" value="plastic" /><span><strong>Cut avoidable single-use plastic</strong><small>Prioritize reuse where it is practical, and sort waste according to local collection rules.</small></span></label>
+            <label class="action-row"><input type="checkbox" value="food" /><span><strong>Ask where seafood comes from</strong><small>Use credible local sustainability guidance and favor traceable, responsibly managed fisheries.</small></span></label>
+            <label class="action-row"><input type="checkbox" value="community" /><span><strong>Back local coastal work</strong><small>Join a vetted cleanup or habitat project that handles collected waste safely.</small></span></label>
+            <label class="action-row"><input type="checkbox" value="policy" /><span><strong>Support effective ocean policy</strong><small>Encourage pollution prevention, science-led fisheries management, and enforceable protected areas.</small></span></label>
+            <label class="action-row"><input type="checkbox" value="climate" /><span><strong>Help cut climate pollution</strong><small>Support practical emissions reductions at home, school, and in your community.</small></span></label>
+          </div>
+          <div class="action-footer"><span class="action-progress"><strong id="action-count">0 actions</strong> selected</span><button class="btn btn-primary" id="copy-plan" type="button">Make my action plan ↗</button></div>
+          <div class="toast" id="plan-message" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="footer-top">
+        <div class="footer-brand"><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 9.5c3.1 0 3.1-2.5 6.2-2.5s3.1 2.5 6.2 2.5S18.5 7 21 7M3 14.5c3.1 0 3.1-2.5 6.2-2.5s3.1 2.5 6.2 2.5 3.1-2.5 3.6-2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span>BLUE CURRENT<small>AN OCEAN FIELD GUIDE</small></span></a><p>Clear signals, better questions, and practical routes toward a healthier ocean.</p></div>
+        <div class="source-list" aria-label="Research sources"><a href="https://coralreefwatch.noaa.gov/satellite/research/coral_bleaching_report.php" target="_blank" rel="noopener noreferrer">NOAA · Coral heat</a><a href="https://www.fao.org/about/fao-unoc-series/2025/fao-global-marine-fish-stock-assessment/" target="_blank" rel="noopener noreferrer">FAO · Fish stocks</a><a href="https://www.unep.org/en/what-we-do/ocean-seas-and-coasts/ecosystem-degradation-pollution/plastic-pollution-marine-litter" target="_blank" rel="noopener noreferrer">UNEP · Plastic leakage</a><a href="https://www.noaa.gov/ocean-acidification" target="_blank" rel="noopener noreferrer">NOAA · Acidification</a><a href="https://oceanservice.noaa.gov/facts/deadzone.html" target="_blank" rel="noopener noreferrer">NOAA · Dead zones</a><a href="https://oceanservice.noaa.gov/facts/ghostfishing.html" target="_blank" rel="noopener noreferrer">NOAA · Ghost fishing</a><a href="https://iucn.org/press-release/202604/world-reaches-milestone-nature-10-ocean-now-officially-protected" target="_blank" rel="noopener noreferrer">IUCN · Ocean protection</a></div>
+      </div>
+      <div class="footer-bottom"><span>RESEARCH SNAPSHOT: 26 OCTOBER 2026 · GLOBAL ESTIMATES VARY BY METHOD</span><span>Built for curious people, not perfect people. · <a href="#top">Back to surface ↑</a></span></div>
+    </div>
+  </footer>
+
+  <div class="modal-backdrop" id="issue-backdrop" role="presentation">
+    <section class="issue-modal" id="issue-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-lede" tabindex="-1">
+      <button class="modal-close" type="button" id="modal-close" aria-label="Close issue details">×</button>
+      <div class="modal-tag" id="modal-tag">FIELD NOTE 01 / WASTE</div>
+      <h2 id="modal-title">Plastic, everywhere</h2>
+      <p class="modal-lede" id="modal-lede"></p>
+      <div class="modal-stat"><strong id="modal-stat-value"></strong><span id="modal-stat-copy"></span></div>
+      <div class="modal-columns"><div><h3>Why it matters</h3><p id="modal-why"></p></div><div><h3>What helps</h3><p id="modal-fix"></p></div></div>
+      <div class="modal-source"><small id="modal-source-name">Research source</small><a id="modal-source-link" href="#" target="_blank" rel="noopener noreferrer">Open the evidence ↗</a></div>
+    </section>
+  </div>
+
+  <script>
+    const issues = {
+      plastic: {
+        tag: 'FIELD NOTE 01 / WASTE', title: 'Plastic does not simply disappear.',
+        lede: 'Plastic pollution enters the ocean from many pathways, including rivers, stormwater, coastal litter, and activity at sea. Larger items can injure wildlife, while weathering breaks plastics into smaller fragments.',
+        stat: '19–23 million tonnes', statCopy: 'of plastic waste leak into aquatic ecosystems each year. This global estimate includes freshwater systems as well as seas.',
+        why: 'Animals can ingest debris or become entangled in it. Microplastics are widespread, and contamination is difficult to remove once it disperses through water, sediments, and food webs.',
+        fix: 'Prevent waste upstream: reduce unnecessary single-use products, design reusable and refillable systems, improve collection and wastewater controls, and support binding policies that cut plastic production and leakage.',
+        source: 'UNEP · Plastic pollution & marine litter', url: 'https://www.unep.org/en/what-we-do/ocean-seas-and-coasts/ecosystem-degradation-pollution/plastic-pollution-marine-litter'
+      },
+      heat: {
+        tag: 'FIELD NOTE 02 / HEAT', title: 'The ocean is holding the heat.',
+        lede: 'Human-caused warming is loading the ocean with heat. When sea temperatures remain unusually high, corals may expel the algae that feed them, a stress response known as bleaching.',
+        stat: '84% of reef area', statCopy: 'experienced bleaching-level heat stress during the fourth global coral bleaching event from early 2023 to mid-2025. Heat stress does not mean every coral died.',
+        why: 'Coral reefs provide habitat, support food and livelihoods, and help buffer some coastlines. Bleached corals can recover if conditions improve, but prolonged or repeated heat stress can cause mortality.',
+        fix: 'The core fix is rapid greenhouse-gas emissions cuts. Pair that with locally meaningful protections: reduce land-based pollution, prevent destructive fishing, restore connected habitats, and monitor reefs so management can respond early.',
+        source: 'NOAA Coral Reef Watch · June 2026 update', url: 'https://coralreefwatch.noaa.gov/satellite/research/coral_bleaching_report.php'
+      },
+      fishing: {
+        tag: 'FIELD NOTE 03 / FOOD WEBS', title: 'Fish need time to replace fish.',
+        lede: 'Overfishing happens when fish are removed faster than populations can replenish. Poorly managed fishing can also damage habitats and catch species that were never the target.',
+        stat: '35.5% of assessed stocks', statCopy: 'were classified as overfished in FAO’s 2025 global marine fish-stock assessment. The same assessment found better outcomes where fisheries are effectively managed.',
+        why: 'Depleted populations affect marine food webs, food security, jobs, and coastal communities. Global averages also hide major differences between regions and fisheries.',
+        fix: 'Use science-based catch limits, protect nursery and spawning areas, monitor catches, reduce bycatch, end harmful incentives, and make traceability and enforcement part of fisheries management. Choose seafood using credible local guidance rather than a universal species list.',
+        source: 'FAO · Global marine fish-stock assessment', url: 'https://www.fao.org/about/fao-unoc-series/2025/fao-global-marine-fish-stock-assessment/'
+      },
+      acid: {
+        tag: 'FIELD NOTE 04 / CHEMISTRY', title: 'Carbon changes ocean chemistry.',
+        lede: 'As the ocean absorbs carbon dioxide from the atmosphere, seawater chemistry shifts and pH falls. This process is called ocean acidification; seawater is not turning into a strong acid, but it is becoming more acidic.',
+        stat: 'About 26% more acidic', statCopy: 'is how NOAA describes the average global change in ocean acidity over roughly the past 250 years.',
+        why: 'Acidification reduces the availability of carbonate minerals used by many corals and shell-building organisms. Effects can ripple through food webs and communities that rely on fisheries and shellfish.',
+        fix: 'Cut carbon dioxide emissions at the scale needed to slow the cause. Improve local water quality too, because nutrient runoff and other coastal pressures can worsen conditions in some places; keep monitoring chemistry and vulnerable habitats.',
+        source: 'NOAA Ocean Acidification Program', url: 'https://oceanacidification.noaa.gov/what-is-ocean-acidification/'
+      },
+      oxygen: {        tag: 'FIELD NOTE 05 / OXYGEN', title: 'Some waters are running out of oxygen.',
+        lede: 'Dead zones are areas with too little dissolved oxygen to support many kinds of marine life. One major human-driven cause is nutrient pollution from fertilizer runoff and wastewater, which can fuel algal blooms.',
+        stat: 'Low oxygen changes habitat', statCopy: 'When algae die and decompose, the process consumes oxygen. Mobile animals may leave; less mobile animals can be stressed or die.',
+        why: 'Hypoxia can disrupt fisheries, bottom habitats, and coastal economies. Dead zones vary in size and timing, and their causes can interact with water circulation and warming.',
+        fix: 'Reduce excess nitrogen and phosphorus at source, improve wastewater treatment, use fertilizer more precisely, restore wetlands and vegetated buffers, and monitor watersheds as well as coastal water.',
+        source: 'NOAA Ocean Service · What is a dead zone?', url: 'https://oceanservice.noaa.gov/facts/deadzone.html'
+      },
+      gear: {
+        tag: 'FIELD NOTE 06 / LOST GEAR', title: 'A net can keep fishing after it is lost.',
+        lede: 'Abandoned, lost, or discarded fishing gear can continue trapping animals long after it leaves a fisher’s control. The effect is known as ghost fishing, and durable synthetic materials can persist for years.',
+        stat: 'Harm that keeps moving', statCopy: 'Lost nets, lines, and traps can entangle wildlife, damage habitat, and travel with ocean currents far from the place where they were lost.',
+        why: 'Ghost gear can kill non-target animals, create navigation hazards, and add long-lived debris to the ocean. It is hard to find and retrieve in deep or sensitive habitats.',
+        fix: 'Prevent gear loss through better gear marking and reporting; provide convenient port reception and take-back schemes; support safe retrieval programs; and develop fishing gear that is easier to locate or less harmful when lost.',
+        source: 'NOAA Ocean Service · What is ghost fishing?', url: 'https://oceanservice.noaa.gov/facts/ghostfishing.html'
+      }
+    };
+
+    const backdrop = document.getElementById('issue-backdrop');
+    const modal = document.getElementById('issue-modal');
+    const closeButton = document.getElementById('modal-close');
+    let previousFocus = null;
+
+    function openIssue(key) {
+      const data = issues[key];
+      if (!data) return;
+      previousFocus = document.activeElement;
+      document.getElementById('modal-tag').textContent = data.tag;
+      document.getElementById('modal-title').textContent = data.title;
+      document.getElementById('modal-lede').textContent = data.lede;
+      document.getElementById('modal-stat-value').textContent = data.stat;
+      document.getElementById('modal-stat-copy').textContent = data.statCopy;
+      document.getElementById('modal-why').textContent = data.why;
+      document.getElementById('modal-fix').textContent = data.fix;
+      document.getElementById('modal-source-name').textContent = data.source;
+      const sourceLink = document.getElementById('modal-source-link');
+      sourceLink.href = data.url;
+      backdrop.classList.add('open');
+      backdrop.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      modal.focus();
+    }
+    function closeIssue() {
+      backdrop.classList.remove('open');
+      backdrop.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (previousFocus && typeof previousFocus.focus === 'function') previousFocus.focus();
+    }
+    document.querySelectorAll('[data-issue]').forEach(button => {
+      button.addEventListener('click', () => openIssue(button.dataset.issue));
+    });
+    closeButton.addEventListener('click', closeIssue);
+    backdrop.addEventListener('click', event => { if (event.target === backdrop) closeIssue(); });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && backdrop.classList.contains('open')) closeIssue();
+      if (event.key === 'Tab' && backdrop.classList.contains('open')) {
+        const focusable = [...modal.querySelectorAll('a[href], button:not([disabled])')];
+        if (!focusable.length) return;
+        const first = focusable[0], last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
+    });
+
+    const checks = [...document.querySelectorAll('.action-row input')];
+    const count = document.getElementById('action-count');
+    const message = document.getElementById('plan-message');
+    function updateCount() {
+      const selected = checks.filter(input => input.checked).length;
+      count.textContent = `${selected} ${selected === 1 ? 'action' : 'actions'}`;
+      message.textContent = '';
+    }
+    checks.forEach(input => input.addEventListener('change', updateCount));
+    document.getElementById('copy-plan').addEventListener('click', async () => {
+      const selected = checks.filter(input => input.checked).map(input => input.closest('.action-row').querySelector('strong').textContent);
+      if (!selected.length) {
+        message.textContent = 'Choose at least one action to build your plan.';
+        return;
+      }
+      const plan = `MY BLUE CURRENT ACTION PLAN\n\n${selected.map((item, index) => `${index + 1}. ${item}`).join('\n')}\n\nStart with what is practical, then keep going.`;
+      try {        await navigator.clipboard.writeText(plan);
+        message.textContent = 'Your plan is copied. Put it somewhere you will actually see it.';
+      } catch (error) {
+        const area = document.createElement('textarea');
+        area.value = plan; area.setAttribute('readonly', ''); area.style.position = 'fixed'; area.style.opacity = '0';
+        document.body.appendChild(area); area.select();
+        const copied = document.execCommand('copy'); area.remove();
+        message.textContent = copied ? 'Your plan is copied. Put it somewhere you will actually see it.' : 'Copy is unavailable here. Your selected actions are ready above to write down.';
+      }
+    });
+  </script>
+</body>
+</html>
