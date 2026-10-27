@@ -77,7 +77,8 @@
     h1, h2, h3, p { margin-top: 0; }
     h1 { margin: 22px 0 23px; max-width: 600px; font-size: clamp(43px, 5.1vw, 72px); line-height: .99; letter-spacing: -.065em; font-weight: 560; }
     h1 em { font-family: Georgia, "Times New Roman", serif; font-weight: 400; color: var(--aqua); letter-spacing: -.055em; }
-    .hero-copy > p { max-width: 440px; color: #a9c2c5; font-size: 15px; line-height: 1.8; }    .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 30px; }
+    .hero-copy > p { max-width: 440px; color: #a9c2c5; font-size: 15px; line-height: 1.8; }
+    .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 30px; }
     .btn { display: inline-flex; align-items: center; gap: 11px; border-radius: 999px; text-decoration: none; cursor: pointer; border: 1px solid transparent; font-size: 12px; font-weight: 750; padding: 13px 18px; transition: transform .2s, background .2s, border .2s; }
     .btn:hover { transform: translateY(-2px); }
     .btn-primary { background: var(--aqua); color: #06232c; box-shadow: 0 8px 30px rgba(121,240,215,.12); }
@@ -87,14 +88,16 @@
     .arrow { font-size: 16px; line-height: 1; }
     .micro-note { display: flex; gap: 9px; align-items: center; margin-top: 40px; color: #76999e; text-transform: uppercase; font-size: 9px; letter-spacing: .16em; }
     .micro-note span { width: 6px; height: 6px; background: var(--coral); border-radius: 50%; box-shadow: 0 0 15px rgba(255,152,125,.75); }
-    .reef-stage { position: relative; height: 540px; min-width: 0; border-radius: 48% 48% 16px 16px; overflow: hidden; border: 1px solid rgba(128,218,216,.17); background:
+    .reef-stage { position: relative; height: 540px; min-width: 0; container-type: inline-size; border-radius: 48% 48% 16px 16px; overflow: hidden; border: 1px solid rgba(128,218,216,.22); background:
       radial-gradient(ellipse at 50% 25%, rgba(47,151,165,.16), transparent 48%),
       linear-gradient(180deg, rgba(13,83,98,.35), rgba(2,21,31,.1) 58%, rgba(2,19,27,.58));
       box-shadow: inset 0 0 80px rgba(67,174,180,.07), 0 40px 100px rgba(0,0,0,.1);
     }
-    .reef-stage::before { content:""; position:absolute; inset:0; opacity:.5; background: repeating-radial-gradient(ellipse at 48% 115%, transparent 0 40px, rgba(104,213,211,.11) 41px 42px, transparent 43px 74px); }
-    .stage-label { position: absolute; z-index: 2; left: 28px; top: 27px; color: #a3c4c6; font-size: 9px; letter-spacing: .21em; text-transform: uppercase; }
-    .stage-label strong { display: block; color: var(--aqua); font-weight: 800; margin-top: 6px; letter-spacing: .14em; }
+    .reef-stage::before { content:""; position:absolute; inset:0; opacity:.55; background: repeating-radial-gradient(ellipse at 48% 115%, transparent 0 40px, rgba(104,213,211,.11) 41px 42px, transparent 43px 74px); animation: reef-pulse 12s ease-in-out infinite alternate; }
+    .reef-stage::after { content:""; position:absolute; inset:-15%; z-index:1; pointer-events:none; opacity:.68; background:linear-gradient(112deg,transparent 12%,rgba(121,240,215,.075) 25%,transparent 39%),linear-gradient(74deg,transparent 35%,rgba(125,221,221,.06) 48%,transparent 61%); background-size:190% 100%,170% 100%; mix-blend-mode:screen; animation: water-sweep 16s ease-in-out infinite alternate; }
+    @keyframes water-sweep { from { background-position:0% 0%,100% 0%; opacity:.35; } to { background-position:100% 0%,0% 0%; opacity:.78; } }
+    @keyframes reef-pulse { from { opacity:.28; transform:scale(1); } to { opacity:.65; transform:scale(1.035); } }
+    .stage-label { position: absolute; z-index: 2; left: 28px; top: 27px; color: #a3c4c6; font-size: 9px; letter-spacing: .21em; text-transform: uppercase; }    .stage-label strong { display: block; color: var(--aqua); font-weight: 800; margin-top: 6px; letter-spacing: .14em; }
     .stage-count { position: absolute; z-index: 2; top: 26px; right: 25px; color: #6f969a; font-size: 10px; font-variant-numeric: tabular-nums; }
     .current-line { position: absolute; width: 125%; height: 130px; left: -10%; top: 48%; border-top: 1px solid rgba(119,222,220,.15); border-radius: 50%; transform: rotate(-15deg); }
     .current-line::after { content:""; position:absolute; width:100%; height:100%; top: 16px; border-top: 1px solid rgba(119,222,220,.075); border-radius:50%; }
@@ -105,24 +108,36 @@
     .b4 { width:9px;height:9px;left:32%;top:67%; animation-delay:-6s; }
     .b5 { width:4px;height:4px;left:56%;top:42%; animation-delay:-3s; }
     @keyframes bubbleFloat { 0%,100% { transform:translateY(0); opacity:.45 } 50% { transform:translateY(-16px); opacity:1 } }
-    .fish { position: absolute; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 9px 7px; border: 0; border-radius: 15px; background: transparent; cursor: pointer; color: #d8efec; transition: transform .25s, background .25s, filter .25s; --fish-color: #7af0d7; }
-    .fish:hover, .fish:focus-visible { background: rgba(132,233,222,.09); transform: translateY(-5px) scale(1.06); filter: drop-shadow(0 0 17px rgba(121,240,215,.26)); }
+    .fish { position: absolute; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 9px 7px; border: 0; border-radius: 15px; background: transparent; cursor: pointer; color: #d8efec; transition: background .25s, filter .25s; translate: 0 0; rotate: 0deg; will-change: translate; --fish-color: #7af0d7; }
+    .fish:hover, .fish:focus-visible { z-index: 6; background: rgba(132,233,222,.11); transform: translateY(-3px) scale(1.045); filter: drop-shadow(0 0 19px rgba(121,240,215,.34)); animation-play-state: paused; }
+    .fish:focus-visible { outline: 2px solid var(--aqua); outline-offset: 3px; }
     .fish svg { width: 91px; height: 65px; overflow: visible; filter: drop-shadow(0 12px 11px rgba(0,0,0,.18)); }
-    .fish .fish-caption { display: flex; gap: 6px; align-items: center; font-size: 9px; font-weight: 750; letter-spacing: .06em; white-space: nowrap; }
-    .fish .fish-caption::before { content: ""; width: 5px; height: 5px; background: var(--fish-color); border-radius: 50%; }
-    .f-plastic { left: 10%; top: 24%; --fish-color:#ff9f79; }
-    .f-heat { left: 54%; top: 15%; --fish-color:#ffd36a; }
-    .f-fishing { left: 31%; top: 42%; --fish-color:#83d7ef; }
-    .f-acid { left: 68%; top: 47%; --fish-color:#c5b0ff; }
-    .f-oxygen { left: 12%; top: 62%; --fish-color:#79f0d7; }
-    .f-gear { left: 54%; top: 69%; --fish-color:#ff9b92; }
-    .swim { animation: swim 6s ease-in-out infinite; }
+    .fish .fish-caption { display: flex; gap: 6px; align-items: center; font-size: 9px; font-weight: 750; letter-spacing: .06em; white-space: nowrap; text-shadow: 0 2px 12px rgba(0,12,18,.9); }
+    .fish .fish-caption::before { content: ""; width: 5px; height: 5px; background: var(--fish-color); border-radius: 50%; box-shadow: 0 0 9px var(--fish-color); }
+    .f-plastic { left: 10%; top: 24%; --fish-color:#ff9f79; animation: cruise-plastic 19s ease-in-out -4s infinite; }
+    .f-heat { left: 54%; top: 15%; --fish-color:#ffd36a; animation: cruise-heat 23s ease-in-out -11s infinite; }
+    .f-fishing { left: 31%; top: 42%; --fish-color:#83d7ef; animation: cruise-fishing 17s ease-in-out -7s infinite; }
+    .f-acid { left: 68%; top: 47%; --fish-color:#c5b0ff; animation: cruise-acid 21s ease-in-out -13s infinite; }
+    .f-oxygen { left: 12%; top: 62%; --fish-color:#79f0d7; animation: cruise-oxygen 20s ease-in-out -9s infinite; }
+    .f-gear { left: 54%; top: 69%; --fish-color:#ff9b92; animation: cruise-gear 24s ease-in-out -17s infinite; }
+    .f-heat .swim svg, .f-acid .swim svg, .f-gear .swim svg { transform: scaleX(-1); }
+    .swim { display:block; animation: swim 5.5s ease-in-out infinite; }
     .f-heat .swim { animation-delay:-1.3s; }
     .f-fishing .swim { animation-delay:-3.4s; }
     .f-acid .swim { animation-delay:-2.1s; }
     .f-oxygen .swim { animation-delay:-4.2s; }
     .f-gear .swim { animation-delay:-.8s; }
-    @keyframes swim { 0%,100% { transform:translateY(0) rotate(-1deg) } 50% { transform:translateY(-8px) rotate(1deg) } }
+    @keyframes swim { 0%,100% { transform:translateY(0) rotate(-1deg) } 50% { transform:translateY(-6px) rotate(1.5deg) } }
+    @keyframes cruise-plastic { 0%,100% { translate:0 0; rotate:-1deg; } 28% { translate:10cqi 10px; rotate:1deg; } 62% { translate:20cqi -5px; rotate:2deg; } 82% { translate:12cqi 13px; rotate:0deg; } }
+    @keyframes cruise-heat { 0%,100% { translate:0 0; rotate:1deg; } 24% { translate:-11cqi 14px; rotate:-1deg; } 55% { translate:-18cqi -5px; rotate:-2deg; } 79% { translate:-6cqi 10px; rotate:0deg; } }
+    @keyframes cruise-fishing { 0%,100% { translate:0 0; rotate:0deg; } 29% { translate:10cqi -10px; rotate:2deg; } 59% { translate:16cqi 8px; rotate:1deg; } 80% { translate:5cqi 13px; rotate:-1deg; } }
+    @keyframes cruise-acid { 0%,100% { translate:0 0; rotate:-1deg; } 31% { translate:-10cqi 12px; rotate:1deg; } 62% { translate:-18cqi -4px; rotate:2deg; } 82% { translate:-7cqi 9px; rotate:0deg; } }
+    @keyframes cruise-oxygen { 0%,100% { translate:0 0; rotate:0deg; } 27% { translate:10cqi -12px; rotate:1deg; } 57% { translate:20cqi 4px; rotate:2deg; } 79% { translate:12cqi -9px; rotate:-1deg; } }
+    @keyframes cruise-gear { 0%,100% { translate:0 0; rotate:1deg; } 25% { translate:-12cqi -11px; rotate:-1deg; } 58% { translate:-20cqi -2px; rotate:-2deg; } 80% { translate:-8cqi 8px; rotate:0deg; } }
+    .motion-toggle { position:absolute; z-index:7; top:61px; left:20px; display:inline-flex; align-items:center; gap:7px; padding:7px 10px; border:1px solid rgba(121,240,215,.22); border-radius:999px; color:#a9cfcd; background:rgba(2,20,29,.62); backdrop-filter:blur(10px); cursor:pointer; font-size:9px; letter-spacing:.04em; transition:border-color .2s, color .2s, background .2s; }
+    .motion-toggle:hover { color:var(--aqua); border-color:rgba(121,240,215,.55); background:rgba(5,34,44,.88); }
+    .motion-toggle .motion-icon { color:var(--aqua); font-size:11px; line-height:1; }
+    .reef-stage.motion-paused .fish, .reef-stage.motion-paused .swim, .reef-stage.motion-paused .bubble, .reef-stage.motion-paused::before, .reef-stage.motion-paused::after { animation-play-state:paused!important; }
     .fish-hint { position:absolute; z-index:3; bottom:18px; left:0; right:0; text-align:center; color:#648d93; font-size:9px; letter-spacing:.16em; text-transform:uppercase; }
     .reef-ledge { position:absolute; bottom:-1px; left:0; width:100%; height:98px; opacity:.8; }
     .hero-foot { display:flex; justify-content:space-between; align-items:center; padding-top: 27px; color:#6d9297; font-size:10px; letter-spacing:.1em; text-transform:uppercase; }
@@ -157,6 +172,7 @@
     .card-link span:last-child { font-size:16px; transition:transform .2s; }
     .issue-card:hover .card-link span:last-child { transform:translateX(4px); }
     .card-kpi { position:absolute; right:24px; bottom:61px; font-family:Georgia,serif; font-size:24px; color:rgba(121,240,215,.18); }
+
     .protection { position:relative; overflow:hidden; background:linear-gradient(110deg, #0a3440, #062630 74%); border-block:1px solid rgba(121,240,215,.12); }
     .protection::after { content:""; position:absolute; right:-100px; top:-170px; width:530px; height:530px; border-radius:50%; border:1px solid rgba(121,240,215,.11); box-shadow:0 0 0 55px rgba(121,240,215,.025),0 0 0 115px rgba(121,240,215,.02),0 0 0 175px rgba(121,240,215,.015); }
     .protect-grid { display:grid; grid-template-columns:1fr 1fr; gap:70px; align-items:center; position:relative; z-index:1; }
@@ -180,8 +196,7 @@
     .action-copy h2 { font-size:clamp(34px,4vw,52px); letter-spacing:-.06em; font-weight:550; line-height:1.05; margin:14px 0 18px; }
     .action-copy h2 em { color:var(--aqua); font-family:Georgia,serif; font-weight:400; }
     .action-copy p { max-width:465px; color:#91afb3; line-height:1.85; font-size:13px; }
-    .actions-list { border-top:1px solid var(--line); }
-    .action-row { display:flex; align-items:flex-start; gap:15px; padding:18px 0; border-bottom:1px solid var(--line); cursor:pointer; }
+    .actions-list { border-top:1px solid var(--line); }    .action-row { display:flex; align-items:flex-start; gap:15px; padding:18px 0; border-bottom:1px solid var(--line); cursor:pointer; }
     .action-row input { appearance:none; flex:0 0 18px; width:18px; height:18px; margin:3px 0 0; border:1px solid rgba(121,240,215,.38); border-radius:5px; background:rgba(121,240,215,.04); cursor:pointer; position:relative; }
     .action-row input:checked { background:var(--aqua); border-color:var(--aqua); }
     .action-row input:checked::after { content:"✓"; color:#05232b; font-size:13px; position:absolute; inset:-1px 0 0; text-align:center; font-weight:900; }
@@ -220,6 +235,11 @@
     .modal-source small { color:#62868b; font-size:10px; }
     .modal-source a { font-size:11px; color:var(--aqua); text-underline-offset:3px; font-weight:700; }
     .visually-hidden { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important; }
+    .reveal-ready .reveal { opacity:0; translate:0 20px; transition:opacity .7s ease, translate .7s cubic-bezier(.2,.65,.2,1); }
+    .reveal-ready .reveal.is-visible { opacity:1; translate:0 0; }
+    .reveal-ready .issue-card:nth-child(2), .reveal-ready .stat:nth-child(2) { transition-delay:80ms; }
+    .reveal-ready .issue-card:nth-child(3), .reveal-ready .stat:nth-child(3) { transition-delay:160ms; }
+    @media (max-width: 760px) { .motion-toggle { top:57px; left:14px; padding:6px 8px; font-size:8px; } }
 
     @media (max-width: 1050px) {
       .hero-grid { grid-template-columns:1fr; gap:35px; }
@@ -235,7 +255,8 @@
       .topbar { width:calc(100% - 32px); padding:17px 0; }
       .nav { gap:14px; }
       .nav a { font-size:10px; }
-      .nav a:nth-child(2) { display:none; }      .nav .nav-cta { padding:8px 11px; }
+      .nav a:nth-child(2) { display:none; }
+      .nav .nav-cta { padding:8px 11px; }
       .hero { min-height:auto; padding:112px 0 38px; }
       .hero-grid { grid-template-columns:minmax(0,1fr); gap:25px; }
       h1 { max-width:560px; font-size:clamp(43px, 11vw, 67px); }
@@ -274,8 +295,7 @@
       .action-section { padding-bottom:80px; }
       .footer-top { display:block; }
       .source-list { justify-content:flex-start; margin-top:24px; }
-      .footer-bottom { align-items:flex-start; flex-direction:column; gap:8px; }
-      .issue-modal { padding:29px 22px 24px; }
+      .footer-bottom { align-items:flex-start; flex-direction:column; gap:8px; }      .issue-modal { padding:29px 22px 24px; }
       .modal-columns { grid-template-columns:1fr; gap:18px; }
       .modal-stat { align-items:flex-start; flex-direction:column; gap:7px; }
     }
@@ -314,7 +334,8 @@
 
   <main>
     <section class="hero" id="top">
-      <div class="wrap">        <div class="hero-grid">
+      <div class="wrap">
+        <div class="hero-grid">
           <div class="hero-copy">
             <span class="eyebrow">A living blue planet</span>
             <h1>The ocean is not a <em>bottomless</em> resource.</h1>
@@ -328,6 +349,7 @@
           <div class="reef-stage" aria-label="Interactive ocean scene. Select one of the six fish to explore an ocean conservation issue.">
             <div class="stage-label">Below the surface<strong>Six signals to follow</strong></div>
             <div class="stage-count">FIELD NOTES / 001—006</div>
+            <button class="motion-toggle" id="motion-toggle" type="button" aria-pressed="false" aria-label="Pause ocean scene movement"><span class="motion-icon" aria-hidden="true">Ⅱ</span><span data-motion-label>Pause motion</span></button>
             <div class="current-line" aria-hidden="true"></div>
             <i class="bubble b1" aria-hidden="true"></i><i class="bubble b2" aria-hidden="true"></i><i class="bubble b3" aria-hidden="true"></i><i class="bubble b4" aria-hidden="true"></i><i class="bubble b5" aria-hidden="true"></i>
             <button class="fish f-plastic" data-issue="plastic" aria-label="Explore plastic pollution">
@@ -372,8 +394,7 @@
 
     <section class="section" id="signals">
       <div class="wrap">
-        <div class="section-top">
-          <div><span class="eyebrow">The signals</span><h2>Six pressures. One <em>connected</em> ocean.</h2></div>
+        <div class="section-top">          <div><span class="eyebrow">The signals</span><h2>Six pressures. One <em>connected</em> ocean.</h2></div>
           <p>These problems rarely happen alone. Climate stress can weaken reefs; pollution can compound habitat loss; and the effects travel through food webs and coastal communities.</p>
         </div>
         <div class="issue-grid">
@@ -393,7 +414,8 @@
         <div class="progress-panel">
           <div class="progress-head"><div><span>Ocean officially designated protected</span><strong>10.01%</strong></div><span class="progress-badge">30% target by 2030</span></div>
           <div class="progress-track" role="img" aria-label="10.01 percent of the ocean is officially designated within protected and conserved areas, with a global goal of 30 percent by 2030."><span></span></div>
-          <div class="progress-scale"><span>0% · today’s designation</span><span>30% · 2030 goal</span></div>          <p>As of April 2026, 10.01% of the ocean had been officially designated within protected and conserved areas. That is real progress, but designation alone does not guarantee effective protection. <a href="https://iucn.org/press-release/202604/world-reaches-milestone-nature-10-ocean-now-officially-protected" target="_blank" rel="noopener noreferrer">Source: IUCN, April 2026</a>.</p>
+          <div class="progress-scale"><span>0% · today’s designation</span><span>30% · 2030 goal</span></div>
+          <p>As of April 2026, 10.01% of the ocean had been officially designated within protected and conserved areas. That is real progress, but designation alone does not guarantee effective protection. <a href="https://iucn.org/press-release/202604/world-reaches-milestone-nature-10-ocean-now-officially-protected" target="_blank" rel="noopener noreferrer">Source: IUCN, April 2026</a>.</p>
         </div>
       </div>
     </section>
@@ -471,8 +493,8 @@
         why: 'Acidification reduces the availability of carbonate minerals used by many corals and shell-building organisms. Effects can ripple through food webs and communities that rely on fisheries and shellfish.',
         fix: 'Cut carbon dioxide emissions at the scale needed to slow the cause. Improve local water quality too, because nutrient runoff and other coastal pressures can worsen conditions in some places; keep monitoring chemistry and vulnerable habitats.',
         source: 'NOAA Ocean Acidification Program', url: 'https://oceanacidification.noaa.gov/what-is-ocean-acidification/'
-      },
-      oxygen: {        tag: 'FIELD NOTE 05 / OXYGEN', title: 'Some waters are running out of oxygen.',
+      },      oxygen: {
+        tag: 'FIELD NOTE 05 / OXYGEN', title: 'Some waters are running out of oxygen.',
         lede: 'Dead zones are areas with too little dissolved oxygen to support many kinds of marine life. One major human-driven cause is nutrient pollution from fertilizer runoff and wastewater, which can fuel algal blooms.',
         stat: 'Low oxygen changes habitat', statCopy: 'When algae die and decompose, the process consumes oxygen. Mobile animals may leave; less mobile animals can be stressed or die.',
         why: 'Hypoxia can disrupt fisheries, bottom habitats, and coastal economies. Dead zones vary in size and timing, and their causes can interact with water circulation and warming.',
@@ -493,6 +515,35 @@
     const modal = document.getElementById('issue-modal');
     const closeButton = document.getElementById('modal-close');
     let previousFocus = null;
+
+    const reefStage = document.querySelector('.reef-stage');
+    const motionToggle = document.getElementById('motion-toggle');
+    const motionLabel = motionToggle.querySelector('[data-motion-label]');
+    motionToggle.addEventListener('click', () => {
+      const paused = !reefStage.classList.contains('motion-paused');
+      reefStage.classList.toggle('motion-paused', paused);
+      motionToggle.setAttribute('aria-pressed', String(paused));
+      motionToggle.setAttribute('aria-label', paused ? 'Resume ocean scene movement' : 'Pause ocean scene movement');
+      motionLabel.textContent = paused ? 'Resume motion' : 'Pause motion';
+      motionToggle.querySelector('.motion-icon').textContent = paused ? '▶' : 'Ⅱ';
+    });
+
+    if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const revealTargets = document.querySelectorAll('.stat, .section-top, .issue-card, .protect-copy, .progress-panel, .action-copy, .actions-list');
+      if (revealTargets.length) {
+        document.body.classList.add('reveal-ready');
+        revealTargets.forEach(element => element.classList.add('reveal'));
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -36px 0px' });
+        revealTargets.forEach(element => revealObserver.observe(element));
+      }
+    }
 
     function openIssue(key) {
       const data = issues[key];
@@ -541,8 +592,7 @@
     function updateCount() {
       const selected = checks.filter(input => input.checked).length;
       count.textContent = `${selected} ${selected === 1 ? 'action' : 'actions'}`;
-      message.textContent = '';
-    }
+      message.textContent = '';    }
     checks.forEach(input => input.addEventListener('change', updateCount));
     document.getElementById('copy-plan').addEventListener('click', async () => {
       const selected = checks.filter(input => input.checked).map(input => input.closest('.action-row').querySelector('strong').textContent);
@@ -551,7 +601,8 @@
         return;
       }
       const plan = `MY BLUE CURRENT ACTION PLAN\n\n${selected.map((item, index) => `${index + 1}. ${item}`).join('\n')}\n\nStart with what is practical, then keep going.`;
-      try {        await navigator.clipboard.writeText(plan);
+      try {
+        await navigator.clipboard.writeText(plan);
         message.textContent = 'Your plan is copied. Put it somewhere you will actually see it.';
       } catch (error) {
         const area = document.createElement('textarea');
